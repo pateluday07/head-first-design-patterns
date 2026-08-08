@@ -1,14 +1,48 @@
-# head-first-design-patterns
-This project is dedicated to the Head-First-Design-Patterns book
+# LLD Design Patterns
 
-As of now, 3 design patterns available in the stock
+Java examples for low-level design and common object-oriented design patterns.
 
-* Strategy Pattern
-* Observer Pattern
-* Decorator Pattern
+## Branch: 01-singleton-pattern
 
-Just go to the `/hedfirst-design-patterns/src/patterns/` directory and you will find them.
+This branch demonstrates the Singleton creational design pattern with a thread-safe, lazily initialized `ConfigurationManager`.
 
-Take a look and apply it to your next software development and yes don't forget to make reference to the Head-First-Design-Patterns book.
+The implementation uses:
 
-#### Note: This project is under development, there are more patterns is coming, so stay tuned :) 
+- A private constructor to prevent direct object creation.
+- A static `volatile` instance field.
+- A public `getInstance()` accessor.
+- Double-checked locking inside a synchronized block.
+
+## Project Structure
+
+```text
+src/
+  patterns/
+    creational/
+      singleton/
+        ConfigurationManager.java
+        Tester.java
+```
+
+## Run the Example
+
+From the repository root:
+
+```bash
+javac -d out/production/lld-design-patterns src/patterns/creational/singleton/*.java
+java -cp out/production/lld-design-patterns patterns.creational.singleton.Tester
+```
+
+Expected output:
+
+```text
+configuration added..
+configuration retrieved..
+configuration added..
+configuration retrieved..
+true
+true
+true
+```
+
+The `true` values confirm that every call to `ConfigurationManager.getInstance()` returns the same object instance.
