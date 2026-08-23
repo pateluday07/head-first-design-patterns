@@ -31,7 +31,7 @@ From the repository root:
 
 ```bash
 javac -d out/production/lld-design-patterns src/patterns/creational/singleton/*.java
-java -cp out/production/lld-design-patterns patterns.creational.singleton.Tester
+java -cp out/production/lld-design-patterns patterns.creational.singleton.lazy.Tester
 ```
 
 Expected output:

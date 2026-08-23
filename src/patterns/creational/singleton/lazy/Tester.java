@@ -1,4 +1,4 @@
-package patterns.creational.singleton;
+package patterns.creational.singleton.lazy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

@@ -1,4 +1,4 @@
-package patterns.creational.singleton;
+package patterns.creational.singleton.lazy;
 
 public class ConfigurationManager {
 
