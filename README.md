@@ -2,54 +2,15 @@
 
 Java examples for low-level design and common object-oriented design patterns.
 
-## Branch: 01-singleton-enum
+This repository is organized by pattern category and currently focuses on creational design patterns.
 
-This branch demonstrates the Singleton creational design pattern with two implementations:
+## Patterns Covered
 
-- A lazy, thread-safe singleton using double-checked locking.
-- An eager enum singleton using `INSTANCE`.
-
-The examples also show how Java reflection affects each implementation.
-
-## Implementations
-
-### Lazy Singleton
-
-Package:
-
-```text
-patterns.creational.singleton.lazy
-```
-
-`ConfigurationManager` uses:
-
-- A private constructor to prevent direct object creation.
-- A static `volatile` instance field.
-- A public `getInstance()` accessor.
-- Double-checked locking inside a synchronized block.
-
-`lazy.Tester` shows that normal calls to `getInstance()` return the same object, but reflection can still break this implementation by:
-
-- Resetting the private static `instance` field.
-- Invoking the private constructor directly.
-
-### Eager Enum Singleton
-
-Package:
-
-```text
-patterns.creational.singleton.eager
-```
-
-`EagerConfigManager` is implemented as an enum:
-
-```java
-public enum EagerConfigManager {
-    INSTANCE;
-}
-```
-
-`eager.Tester` shows that repeated access to `EagerConfigManager.INSTANCE` returns the same object. It also attempts reflective construction, but standard Java reflection cannot create a second enum singleton instance.
+| Category | Pattern | Package | Demo |
+| --- | --- | --- | --- |
+| Creational | Singleton - lazy, double-checked locking | `patterns.creational.singleton.lazy` | `patterns.creational.singleton.lazy.Tester` |
+| Creational | Singleton - eager enum | `patterns.creational.singleton.eager` | `patterns.creational.singleton.eager.Tester` |
+| Creational | Builder | `patterns.creational.builder` | `patterns.creational.builder.Tester` |
 
 ## Project Structure
 
@@ -57,28 +18,53 @@ public enum EagerConfigManager {
 src/
   patterns/
     creational/
+      builder/
+        House.java
+        Tester.java
+        bad/
+          BadHouse.java
       singleton/
-        lazy/
-          ConfigurationManager.java
-          Tester.java
         eager/
           EagerConfigManager.java
           Tester.java
+        lazy/
+          ConfigurationManager.java
+          Tester.java
 ```
+
+## Prerequisites
+
+- JDK 8 or later
+- A terminal that can run `javac` and `java`
+
+This is a plain Java project. There is no Maven or Gradle build file.
 
 ## Compile
 
-From the repository root:
+From the repository root, compile all source files:
 
 ```powershell
-javac -d out/production/lld-design-patterns src/patterns/creational/singleton/lazy/*.java src/patterns/creational/singleton/eager/*.java
+New-Item -ItemType Directory -Force out/production/lld-design-patterns | Out-Null
+$javaFiles = Get-ChildItem -Path src -Recurse -Filter *.java
+javac -d out/production/lld-design-patterns $javaFiles.FullName
 ```
 
-## Run the Lazy Singleton Example
+## Run Examples
+
+### Lazy Singleton
 
 ```powershell
 java -cp out/production/lld-design-patterns patterns.creational.singleton.lazy.Tester
 ```
+
+This example implements a lazy singleton with:
+
+- A private constructor
+- A `volatile` static instance field
+- A public `getInstance()` method
+- Double-checked locking inside a synchronized block
+
+It also demonstrates how reflection can break this implementation by resetting the private static instance field or invoking the private constructor directly.
 
 Expected output:
 
@@ -96,14 +82,21 @@ comparing configManager1 and configManager4 using == operator..
 false
 ```
 
-The first `true` confirms that repeated calls to `ConfigurationManager.getInstance()` return the same object instance.
-The `false` values show that resetting the private static instance field or invoking the private constructor through reflection can break this singleton implementation.
-
-## Run the Eager Enum Singleton Example
+### Eager Enum Singleton
 
 ```powershell
 java -cp out/production/lld-design-patterns patterns.creational.singleton.eager.Tester
 ```
+
+This example implements the singleton as an enum:
+
+```java
+public enum EagerConfigManager {
+    INSTANCE;
+}
+```
+
+Repeated access to `EagerConfigManager.INSTANCE` returns the same object. The demo also attempts reflective construction, which standard Java reflection cannot use to create a second enum singleton instance.
 
 Expected output:
 
@@ -120,5 +113,29 @@ creating configManager3 using reflection by accessing the private constructor..
 Reflection attack failed: patterns.creational.singleton.eager.EagerConfigManager.<init>()
 ```
 
-The `true` confirms that repeated access to `EagerConfigManager.INSTANCE` returns the same enum instance.
-The reflection attempt does not create another object. Enum singletons are protected from normal reflection-based constructor attacks by the JVM.
+### Builder
+
+```powershell
+java -cp out/production/lld-design-patterns patterns.creational.builder.Tester
+```
+
+This example compares:
+
+- `BadHouse`, which requires a long constructor with many ordered parameters
+- `House`, which uses a nested `HouseBuilder` for readable and chainable object construction
+
+Expected output:
+
+```text
+Bad implementation:
+BadHouse{door='Wooden Door', window='Glass Window', wall='Brick Wall', roof='Concrete Roof', swimmingPool='Big Pool', garden='Big Garden with Trees', garage='Medium', basement='Small'}
+
+Good implementation using Builder pattern:
+House{door='Wooden Door', window='Glass Window', wall='Brick Wall', roof='Concrete Roof', swimmingPool='Big Pool', garden='Big Garden with Trees', garage='Medium', basement='Small'}
+```
+
+## Notes
+
+- Generated class files are written to `out/production/lld-design-patterns`.
+- Source code is intentionally small and example-focused so each pattern can be read independently.
+- Add new examples under `src/patterns/<category>/<pattern-name>` and include a `Tester` class when a pattern needs a runnable demo.
